@@ -68,6 +68,12 @@ export const userProfileType = defineType({
           title: "Longitude",
           type: "number",
         }),
+        defineField({
+          name: "address",
+          title: "Address",
+          type: "string",
+          description: "Display Address",
+        }),
       ],
     }),
     defineField({
@@ -77,10 +83,10 @@ export const userProfileType = defineType({
       description: "Maximum distance to search for classes",
       options: {
         list: [
-          { title: "5 mi", value: 5 },
+          { title: "2 mi", value: 2 },
           { title: "10 mi", value: 10 },
+          { title: "15 mi", value: 15 },
           { title: "25 mi", value: 25 },
-          { title: "50 mi", value: 50 },
         ],
       },
       initialValue: 10,

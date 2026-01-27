@@ -1,7 +1,7 @@
 import { clerkClient } from "@clerk/nextjs/server";
 import { client } from "@/sanity/lib/client";
+import { USER_PROFILE_ID_QUERY } from "@/sanity/lib/queries";
 import { writeClient } from "@/sanity/lib/writeClient";
-import { USER_PROFILE_ID_QUERY } from "@/sanity/lib/quieries";
 
 /**
  * Get or create a user profile in Sanity.

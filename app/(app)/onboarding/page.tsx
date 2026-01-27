@@ -1,20 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import {
+  ArrowRightIcon,
+  Check,
+  Dumbbell,
+  Loader2Icon,
   MapPinIcon,
   TargetIcon,
-  ArrowRightIcon,
-  Loader2Icon,
-  Dumbbell,
-  Check,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { AddressSearch } from "@/components/app/maps/AddressSearch";
 import { RadiusSelector } from "@/components/app/maps/RadiusSelector";
-import { completeOnboarding } from "@/lib/actions/profile";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { completeOnboarding } from "@/lib/actions/profile";
 
 type Step = "location" | "radius";
 

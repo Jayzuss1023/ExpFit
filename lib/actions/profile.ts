@@ -3,10 +3,13 @@
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { client } from "@/sanity/lib/client";
-import { writeClient } from "@/sanity/lib/writeClient";
+// import { client } from "@/sanity/lib/client";
 import { sanityFetch } from "@/sanity/lib/live";
-import { USER_PROFILE_WITH_PREFERENCES_QUERY } from "@/sanity/lib/quieries";
+import {
+  USER_PROFILE_ID_QUERY,
+  USER_PROFILE_WITH_PREFERENCES_QUERY,
+} from "@/sanity/lib/queries";
+import { writeClient } from "@/sanity/lib/writeClient";
 import { getOrCreateUserProfile } from "../utils/user-profile";
 
 export type ProfileResult = {
@@ -76,4 +79,37 @@ export async function completeOnboarding(
     console.error("Onboarding error:", error);
     return { success: false, error: "Failed to complete onboarding" };
   }
+}
+
+// Get user's location preferences
+export async function getUserPreferences(): Promise<ProfilePreferences | null> {
+  try {
+    const { userId } = await auth();
+
+    if (!userId) {
+      return null;
+    }
+
+    const userProfile = await sanityFetch({
+      query: USER_PROFILE_WITH_PREFERENCES_QUERY,
+      params: { clerkId: userId },
+    });
+
+    if (!userProfile.data?.location || !userProfile.data?.searchRadius) {
+      return null;
+    }
+
+    return {
+      location: userProfile.data.location,
+      searchRadius: userProfile.data.searchRadius,
+    };
+  } catch (error) {
+    console.error("Get preferences error:", error);
+    return null;
+  }
+}
+
+// Redirect after onboarding completion
+export async function redirectAfterOnboarding() {
+  redirect("/");
 }

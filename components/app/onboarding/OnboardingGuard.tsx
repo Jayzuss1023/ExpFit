@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 interface OnboardingGuardProps {
   children: React.ReactNode;

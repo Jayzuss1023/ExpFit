@@ -1,8 +1,8 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import type React from "react";
 import { AppHeader } from "@/components/app/layout/AppHeader";
-import { SanityLive } from "@/sanity/lib/live";
 import { OnboardingGuard } from "@/components/app/onboarding/OnboardingGuard";
+import { SanityLive } from "@/sanity/lib/live";
 
 export default function AppLayout({
   children,

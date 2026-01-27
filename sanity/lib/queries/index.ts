@@ -1,5 +1,3 @@
-// Sessions
-
 // Activities
 export { ACTIVITIES_QUERY, ACTIVITY_BY_SLUG_QUERY } from "./activities";
 // AI Tools
@@ -25,6 +23,7 @@ export {
 } from "./bookings";
 // Categories
 export { CATEGORIES_QUERY } from "./categories";
+// Sessions
 export {
   FILTERED_SESSIONS_QUERY,
   SESSION_BY_ID_QUERY,

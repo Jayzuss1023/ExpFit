@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 import { SearchIcon, XIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDebounce } from "@/lib/hooks/useDebounce";
+import { cn } from "@/lib/utils";
 
 interface ClassSearchProps {
   className?: string;
@@ -68,7 +68,11 @@ export function ClassSearch({
         className="h-11 w-full rounded-full border bg-background pl-11 pr-11 text-sm transition-all placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
       />
       {query && (
-        <button type="button" onClick={handleClear}>
+        <button
+          type="button"
+          onClick={handleClear}
+          className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+        >
           <XIcon className="h-4 w-4" />
         </button>
       )}

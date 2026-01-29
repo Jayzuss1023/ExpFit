@@ -1,5 +1,5 @@
-import { CalendarIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
+import { CalendarIcon } from "@sanity/icons";
 
 export const classSessionType = defineType({
   name: "classSession",
@@ -36,7 +36,7 @@ export const classSessionType = defineType({
       validation: (Rule) => [
         Rule.required().error("Capacity is required"),
         Rule.min(1).error("Capacity must be at least 1"),
-        Rule.max(100).error("Capacity seems unusually high"),
+        Rule.max(100).warning("Capacity seems unusually high"),
       ],
       initialValue: 20,
     }),

@@ -1,5 +1,5 @@
-import { ClipboardIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
+import { ClipboardIcon } from "@sanity/icons";
 
 export const bookingType = defineType({
   name: "booking",

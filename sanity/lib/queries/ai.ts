@@ -2,16 +2,16 @@ import { defineQuery } from "next-sanity";
 
 // Search activities for AI tools
 export const AI_SEARCH_ACTIVITIES_QUERY = defineQuery(`*[
-    _type == "activity"
-] | order(name asc [0...20] {
-    _id,
-    name,
-    instructor,
-    duration,
-    tierLevel,
-    aiKeywords,
-    category->{name}
-})`);
+  _type == "activity"
+] | order(name asc) [0...20] {
+  _id,
+  name,
+  instructor,
+  duration,
+  tierLevel,
+  aiKeywords,
+  category->{name}
+}`);
 
 // Get upcoming sessions for a class name
 export const AI_CLASS_SESSIONS_QUERY = defineQuery(`*[

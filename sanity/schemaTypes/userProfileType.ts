@@ -1,5 +1,5 @@
-import { PinIcon, UserIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
+import { UserIcon, PinIcon } from "@sanity/icons";
 
 export const userProfileType = defineType({
   name: "userProfile",
@@ -72,21 +72,21 @@ export const userProfileType = defineType({
           name: "address",
           title: "Address",
           type: "string",
-          description: "Display Address",
+          description: "Display address",
         }),
       ],
     }),
     defineField({
       name: "searchRadius",
-      title: "Search Radius (miles)",
+      title: "Search Radius (km)",
       type: "number",
       description: "Maximum distance to search for classes",
       options: {
         list: [
-          { title: "2 mi", value: 2 },
-          { title: "10 mi", value: 10 },
-          { title: "15 mi", value: 15 },
-          { title: "25 mi", value: 25 },
+          { title: "5 km", value: 5 },
+          { title: "10 km", value: 10 },
+          { title: "25 km", value: 25 },
+          { title: "50 km", value: 50 },
         ],
       },
       initialValue: 10,

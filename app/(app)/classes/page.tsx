@@ -1,16 +1,17 @@
 import { auth } from "@clerk/nextjs/server";
+import { format } from "date-fns";
 import { MapPinIcon, SearchIcon } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-// import { ClassesContent } from "@/components/app/classes/ClassesContent";
-// import { ClassesFilters } from "@/components/app/classes/ClassesFilters";
+import { ClassesContent } from "@/components/app/classes/ClassesContent";
+import { ClassesFilters } from "@/components/app/classes/ClassesFilters";
 import { ClassSearch } from "@/components/app/classes/ClassSearch";
 // import { ClassesMapSidebar } from "@/components/app/maps/ClassesMapSidebar";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { getUserPreferences } from "@/lib/actions/profile";
-// import { filterSessionsByDistance, getBoundingBox } from "@/lib/utils/distance";
+import { filterSessionsByDistance, getBoundingBox } from "@/lib/utils/distance";
 import { sanityFetch } from "@/sanity/lib/live";
 import {
   CATEGORIES_QUERY,
@@ -46,7 +47,7 @@ export default async function ClassesPage({ searchParams }: PageProps) {
 
   const tierLevels = tierParam ? tierParam.split(",").filter(Boolean) : [];
 
-  // Get user preerences first - needed for bounding box calculation
+  // Get user preferences first - needed for bounding box calculation
   const userPreferences = await getUserPreferences();
 
   // User preferences are always set via onboarding - redirect if missing
@@ -56,15 +57,15 @@ export default async function ClassesPage({ searchParams }: PageProps) {
 
   const { location, searchRadius } = userPreferences;
 
-  // GEOGRAPHIC FILTERING - Two-step approach for performance:
-
-  // Step 1 (Database): Calculate a rectangular bounding box from user's location + radius.
-  // This is passed to GROQ to filter at the database level, reducing 100k+ bloval session
-  // down to ~100-500 sessions within the user's general/
+  // GEOGRAPHIC Filtering - Two-step approach for performance
   //
-  // Step (Client): The filterSessionsByDistance() function further refines results using
-  // The Haversine formula for accurate circular distance calculation.  This handles the
-  // corner cases where the rectangular bounding box extends beyond the circular radius,
+  // Step 1 (Database): Calculate a rectangular bounding box from user's location + radius.
+  // This is passed to GROQ to filter at the database level, reducing 100k+ global sessions
+  // Down to ~100-500 sessions within the user's general area.
+  //
+  // Step 2 (Client): The filterSessionByDistance() function further refines results using
+  // The Haversine formula for accurate circular distance calculation. This handles
+  // The corner cases where the regtangular bounding box extends beyond the circular radius
 
   const { minLat, maxLat, minLng, maxLng } = getBoundingBox(
     location.lat,
@@ -72,14 +73,104 @@ export default async function ClassesPage({ searchParams }: PageProps) {
     searchRadius,
   );
 
+  // Determine which query to use based on search vs filters
+  // Both queries include bounding box params for geographic pre-filtering
+  const sessionsQuery = searchQuery
+    ? sanityFetch({
+        query: SEARCH_SESSIONS_QUERY,
+        params: { searchTerm: searchQuery, minLat, maxLat, minLng, maxLng },
+      })
+    : sanityFetch({
+        query: FILTERED_SESSIONS_QUERY,
+        params: {
+          venueId: venueId || "",
+          categoryIds,
+          tierLevels,
+          minLat,
+          maxLat,
+          minLng,
+          maxLng,
+        },
+      });
+
+  // Fetch venue name if venue filter is active
+  const venueNameQuery = venueId
+    ? sanityFetch({
+        query: VENUE_NAME_BY_ID_QUERY,
+        params: { venueId },
+      })
+    : Promise.resolve({ data: null });
+
+  const [
+    sessionsResult,
+    categoriesResult,
+    bookedSessionsResult,
+    venueNameResult,
+  ] = await Promise.all([
+    sessionsQuery,
+    sanityFetch({ query: CATEGORIES_QUERY }),
+    userId
+      ? sanityFetch({
+          query: USER_BOOKED_SESSION_IDS_QUERY,
+          params: { clerkId: userId },
+        })
+      : Promise.resolve({ data: [] }),
+    venueNameQuery,
+  ]);
+
+  const allSessions = sessionsResult.data;
+  const categories = categoriesResult.data;
+  const venueName = venueNameResult.data?.name || null;
+  // Filter out null values from booked sessionIds
+  const bookedIds: (string | null)[] = bookedSessionsResult.data || [];
+  const filteredBookedIds = bookedIds.filter((id): id is string => id !== null);
+  const bookedSessionIds = new Set(filteredBookedIds);
+
+  // Count active filters for badge display
+  const activeFilterCount =
+    (venueId ? 1 : 0) + categoryIds.length + tierLevels.length;
+
+  // Filter sessions that have valid startTime for the distance filter
+  const sessionsForFilter = allSessions
+    .filter((s) => s.startTime !== null)
+    .map((s) => ({
+      ...s,
+      startTime: s.startTime as string,
+    }));
+
+  // Get sessions within user's preferred radius, sorted by distance
+  const sessionsWithDistance = filterSessionsByDistance(
+    sessionsForFilter,
+    location.lat,
+    location.lng,
+    searchRadius,
+  );
+
+  // Group sessions bt dat (already sorted by time from GROQ)
+  type SessionWithDistance = (typeof sessionsWithDistance)[number];
+  const groupedByDay = new Map<string, SessionWithDistance[]>();
+  for (const session of sessionsWithDistance) {
+    const dateKey = format(new Date(session.startTime), "yyyy-MM-dd");
+    const existing = groupedByDay.get(dateKey) || [];
+    groupedByDay.set(dateKey, [...existing, session]);
+  }
+
+  const groupedArray = Array.from(groupedByDay.entries());
+
+  // Extract venues for map display
+  const venuesForMap = sessionsWithDistance
+    .filter((s) => s.venue !== null)
+    .map((s) => s.venue)
+    .filter((v): v is NonNullable<typeof v> => v !== null);
+
   return (
-    <div>
+    <div className="min-h-screen bg-background">
       {/* Page Header with Gradient */}
-      <div>
-        <div>
-          <div>
+      <div className="border-b bg-linear-to-r from-primary/5 via-background to-primary/5">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             {/* Search + Filter Button */}
-            <div>
+            <div className="flex items-center gap-3">
               <Suspense
                 fallback={
                   <div className="flex h-11 w-full items-center gap-2 rounded-full border bg-background px-4 sm:w-80 lg:w-96">
@@ -94,18 +185,18 @@ export default async function ClassesPage({ searchParams }: PageProps) {
               </Suspense>
 
               {/* Filter Button (mobile/tablet) */}
-              <div>
+              <div className="lg:hidden">
                 <Suspense fallback={null}>
-                  {/* <ClassesFilters
-                  categories={categories}
-                  activeFilters={{
-                    venueId: venueId || null,
-                    venueName,
-                    categoryIds,
-                    tierLevels,
-                  }}
-                  mobileOnly
-                /> */}
+                  <ClassesFilters
+                    categories={categories}
+                    activeFilters={{
+                      venueId: venueId || null,
+                      venueName,
+                      categoryIds,
+                      tierLevels,
+                    }}
+                    mobileOnly
+                  />
                 </Suspense>
               </div>
             </div>
@@ -140,7 +231,7 @@ export default async function ClassesPage({ searchParams }: PageProps) {
           )}
 
           {/* Active Filters Indicator */}
-          {/* {!searchQuery && activeFilterCount > 0 && (
+          {!searchQuery && activeFilterCount > 0 && (
             <div className="mt-4 flex items-center gap-2">
               <Badge variant="secondary" className="gap-1.5">
                 {activeFilterCount}{" "}
@@ -157,27 +248,29 @@ export default async function ClassesPage({ searchParams }: PageProps) {
                 Clear all filters
               </Link>
             </div>
-          )} */}
+          )}
         </div>
       </div>
 
-      <main>
-        <div>
+      <main className="container mx-auto px-4 py-8">
+        <div className="flex gap-6">
           {/* Collapsible Filters Sidebar */}
-          {/* <ClassesFilters categories={categories} activeFilters={{
-                vanueId: venueId || null
-                vanueName,
-                categoryIds,
-                tierLevels
+          <ClassesFilters
+            categories={categories}
+            activeFilters={{
+              venueId: venueId || null,
+              venueName,
+              categoryIds,
+              tierLevels,
             }}
-            /> */}
+          />
 
           {/* Sessions Content */}
-          <div>
-            {/* <ClassesContent
-                    groupedSessions={groupedArray}
-                    bookedSessionIds={Array.from(bookedSessionIds)}
-                /> */}
+          <div className="min-w-0 flex-1">
+            <ClassesContent
+              groupedSessions={groupedArray}
+              bookedSessionIds={Array.from(bookedSessionIds)}
+            />
           </div>
 
           {/* Map Sidebar - Hidden on mobile/tablet, visible on xl screens */}

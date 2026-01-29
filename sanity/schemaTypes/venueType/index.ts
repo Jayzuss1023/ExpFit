@@ -1,5 +1,5 @@
+import { defineField, defineType, defineArrayMember } from "sanity";
 import { HomeIcon } from "@sanity/icons";
-import { defineArrayMember, defineField, defineType } from "sanity";
 import { MapboxAddressInput } from "./MapboxAddressInput";
 
 export const venueType = defineType({
@@ -147,7 +147,7 @@ export const venueType = defineType({
               name: "open",
               type: "string",
               title: "Opens",
-              description: "e.g, 06:00",
+              description: "e.g., 06:00",
             }),
             defineField({
               name: "close",

@@ -3,10 +3,10 @@ import { CheckIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const RADIUS_OPTIONS = [
-  { value: 2, label: "2mi", description: "Walking distance" },
-  { value: 10, label: "10mi", description: "Short drive" },
-  { value: 15, label: "15mi", description: "Medium distance" },
-  { value: 25, label: "25mi", description: "Long distance" },
+  { value: 5, label: "5km", description: "Walking distance" },
+  { value: 10, label: "10km", description: "Short drive" },
+  { value: 25, label: "25km", description: "Medium distance" },
+  { value: 50, label: "50km", description: "Long distance" },
 ] as const;
 
 interface RadiusSelectorProps {

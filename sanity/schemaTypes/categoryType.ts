@@ -1,5 +1,5 @@
-import { TagIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
+import { TagIcon } from "@sanity/icons";
 
 export const categoryType = defineType({
   name: "category",
@@ -34,7 +34,7 @@ export const categoryType = defineType({
     defineField({
       name: "icon",
       type: "string",
-      description: "Icon identified from @sanity/icons (e.g., 'heart', 'star')",
+      description: "Icon identifier from @sanity/icons (e.g., 'heart', 'star')",
     }),
   ],
   preview: {

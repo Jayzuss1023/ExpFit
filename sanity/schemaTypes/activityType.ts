@@ -1,5 +1,5 @@
+import { defineField, defineType, defineArrayMember } from "sanity";
 import { BoltIcon } from "@sanity/icons";
-import { defineArrayMember, defineField, defineType } from "sanity";
 
 export const activityType = defineType({
   name: "activity",
@@ -18,7 +18,7 @@ export const activityType = defineType({
       name: "name",
       type: "string",
       group: "details",
-      description: "e.g., 'Morning Yoga Flow', 'HIIT Cardio Blast'",
+      description: 'e.g., "Morning Yoga Flow", "HIIT Cardio Blast"',
       validation: (Rule) => [
         Rule.required().error("Activity name is required"),
         Rule.max(100).warning("Keep the name concise"),
@@ -79,7 +79,7 @@ export const activityType = defineType({
       description: "Duration in minutes",
       validation: (Rule) => [
         Rule.required().error("Duration is required"),
-        Rule.min(15).error("Duration must be at least 15 minures"),
+        Rule.min(15).error("Duration must be at least 15 minutes"),
         Rule.max(180).warning("Duration seems unusually long"),
       ],
     }),
@@ -87,12 +87,12 @@ export const activityType = defineType({
       name: "tierLevel",
       type: "string",
       group: "settings",
-      description: "Subscription tier required to acces this class",
+      description: "Subscription tier required to access this class",
       options: {
         list: [
           { title: "Basic", value: "basic" },
           { title: "Performance", value: "performance" },
-          { title: "Chamption", value: "chamption" },
+          { title: "Champion", value: "champion" },
         ],
         layout: "radio",
       },
@@ -108,7 +108,7 @@ export const activityType = defineType({
         layout: "tags",
       },
       description:
-        "Keywords for AI search (e.g., relacing, intense, beginner-friendly)",
+        "Keywords for AI search (e.g., relaxing, intense, beginner-friendly)",
     }),
   ],
   preview: {
@@ -123,7 +123,9 @@ export const activityType = defineType({
       const tierBadge = tierLevel ? `[${tierLevel.toUpperCase()}]` : "";
       return {
         title: `${title} ${tierBadge}`,
-        subtitle: `${instructor || "No instructor"} • ${category || "No category"}`,
+        subtitle: `${instructor || "No instructor"} • ${
+          category || "No category"
+        }`,
         media,
       };
     },

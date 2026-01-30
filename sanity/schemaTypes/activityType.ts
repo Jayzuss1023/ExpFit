@@ -1,5 +1,5 @@
-import { defineField, defineType, defineArrayMember } from "sanity";
 import { BoltIcon } from "@sanity/icons";
+import { defineArrayMember, defineField, defineType } from "sanity";
 
 export const activityType = defineType({
   name: "activity",

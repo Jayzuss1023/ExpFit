@@ -2,8 +2,8 @@
 
 import { format, isToday, isTomorrow } from "date-fns";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { SessionCard } from "./SessionCard";
 import type { FILTERED_SESSIONS_QUERYResult } from "@/sanity.types";
+import { SessionCard } from "./SessionCard";
 
 // Session typer from the query result, extended with distance (calculated client-side)
 type Session = FILTERED_SESSIONS_QUERYResult[number] & { distance: number };
@@ -38,7 +38,6 @@ export function ClassesContent({
   const [activeDay, setActiveDay] = useState<string>(dayKeys[0] || "");
   const isScrollingFromClick = useRef(false);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  console.log(dayKeys);
 
   const scrollToDay = useCallback((dateKey: string) => {
     const element = document.getElementById(`day-${dateKey}`);
@@ -127,14 +126,15 @@ export function ClassesContent({
 
   return (
     <div className="@container">
-      <div>
-        <h1>Upcoming Classes</h1>
-        <p>{totalSessions}</p>
+      {/* Header */}
+      <div className="mb-4 flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Upcoming Classes</h1>
+        <p className="text-muted-foreground">{totalSessions} nearby</p>
       </div>
 
       {/* Sticky Day Tabs */}
-      <div>
-        <div>
+      <div className="sticky top-0 z-10 -mx-4 mb-6 bg-background/95 px-4 py-3 backdrop-blur">
+        <div className="scrollbar-hide flex gap-2 overflow-x-auto pb-1">
           {[...dayKeys].map((dateKey) => {
             // This is the sessions for the day
             const sessionsForDay = groupedSessions.find(
@@ -148,9 +148,22 @@ export function ClassesContent({
                 key={dateKey}
                 type="button"
                 onClick={() => scrollToDay(dateKey)}
+                className={`flex shrink-0 items-center gap-2 rounded-full border px-4 py-2 text0sm font-medium transition-colors ${
+                  isActive
+                    ? "border-violet-500 bg-violet-500 text-white"
+                    : "hover:bg-accenter"
+                }`}
               >
                 {formatTabLabel(dateKey)}
-                <span>{count}</span>
+                <span
+                  className={`rounded-full px-1.5 py-0.5 text-xs ${
+                    isActive
+                      ? "bg-white/20 text-white"
+                      : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {count}
+                </span>
               </button>
             );
           })}
@@ -159,10 +172,16 @@ export function ClassesContent({
 
       {/* Day Sections */}
       {groupedSessions.map(([dateKey, sessions]) => (
-        <section key={dateKey} id={`day-${dateKey}`}>
-          <div>
-            <h2>{formatDayHeader(dateKey)}</h2>
-            <span>
+        <section
+          key={dateKey}
+          id={`day-${dateKey}`}
+          className="mb-10 scroll-mt-24"
+        >
+          <div className="mb-4 flex items-center gap-3">
+            <h2 className="text-lg font-semibold">
+              {formatDayHeader(dateKey)}
+            </h2>
+            <span className="rounded-full bg-muted px-2 py-0.5 text-sm text-muted-foreground">
               {sessions.length} {sessions.length === 1 ? "class" : "classes"}
             </span>
           </div>

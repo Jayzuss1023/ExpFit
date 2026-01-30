@@ -1,5 +1,5 @@
-import { defineField, defineType, defineArrayMember } from "sanity";
 import { HomeIcon } from "@sanity/icons";
+import { defineArrayMember, defineField, defineType } from "sanity";
 import { MapboxAddressInput } from "./MapboxAddressInput";
 
 export const venueType = defineType({

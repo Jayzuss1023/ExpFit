@@ -1,5 +1,5 @@
+import { PinIcon, UserIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
-import { UserIcon, PinIcon } from "@sanity/icons";
 
 export const userProfileType = defineType({
   name: "userProfile",

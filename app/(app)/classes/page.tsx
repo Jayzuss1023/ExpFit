@@ -7,7 +7,7 @@ import { Suspense } from "react";
 import { ClassesContent } from "@/components/app/classes/ClassesContent";
 import { ClassesFilters } from "@/components/app/classes/ClassesFilters";
 import { ClassSearch } from "@/components/app/classes/ClassSearch";
-// import { ClassesMapSidebar } from "@/components/app/maps/ClassesMapSidebar";
+import { ClassesMapSidebar } from "@/components/app/maps/ClassesMapSidebar";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { getUserPreferences } from "@/lib/actions/profile";
@@ -274,12 +274,12 @@ export default async function ClassesPage({ searchParams }: PageProps) {
           </div>
 
           {/* Map Sidebar - Hidden on mobile/tablet, visible on xl screens */}
-          <aside>
-            <Card>
-              {/* <ClassesMapSidebar
-                    venues={venuesForMap}
-                    userLocation={{lay: location.lat, lng: location.lng}}
-                /> */}
+          <aside className="hidden w-100 shrink-0 xl:block">
+            <Card className="sticky top-20 h-[calc(100vh-8rem)] overflow-hidden p-0">
+              <ClassesMapSidebar
+                venues={venuesForMap}
+                userLocation={{ lat: location.lat, lng: location.lng }}
+              />
             </Card>
           </aside>
         </div>

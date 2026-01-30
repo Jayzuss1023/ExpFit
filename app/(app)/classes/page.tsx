@@ -202,31 +202,40 @@ export default async function ClassesPage({ searchParams }: PageProps) {
             </div>
 
             {/* Location Info */}
-            <div>
+            <div className="flex w-full items-center gap-2 overflow-hidden rounded-lg border border-primary/20 bg-primary/5 px-3 py-2 lg:w-auto lg:max-w-md">
               <MapPinIcon className="h-4 w-4 shrink-0 text-primary" />
-              <p>
-                <span>
-                  Within
-                  {/* {searchRadius} */}
-                  mi of
+              <p className="min-w-0 flex-1 truncate text-sm font-medium">
+                <span className="text-muted-foreground">
+                  Within {searchRadius} km of
                 </span>{" "}
-                <span>{/* {location.address} */}</span>
+                <span className="text-primary">{location.address}</span>
               </p>
-              <Link href="/profile">Change</Link>
+              <Link
+                href="/profile"
+                className="shrink-0 text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
+              >
+                Change
+              </Link>
             </div>
           </div>
 
           {/* Search Results Indicator */}
           {searchQuery && (
-            <div>
-              <Badge>
+            <div className="mt-4 flex items-center gap-2">
+              <Badge className="gap-1.5" variant="secondary">
                 <SearchIcon className="h-3 w-3" />
                 Results for &quot;{searchQuery}&quot;
               </Badge>
-              <span>
-                {/* {sessionWithDistance.length}{" "}{sessionWithDistance.length === 1 ? "class : "classes} found */}
+              <span className="text-sm text-muted-foreground">
+                {sessionsWithDistance.length}{" "}
+                {sessionsWithDistance.length === 1 ? "class " : "classes found"}
               </span>
-              <Link href="/classes">Clear Search</Link>
+              <Link
+                href="/classes"
+                className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+              >
+                Clear Search
+              </Link>
             </div>
           )}
 

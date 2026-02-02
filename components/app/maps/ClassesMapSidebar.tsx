@@ -176,15 +176,26 @@ export function ClassesMapSidebar({
               eventHandlers={{ click: () => handleVenueCLick(venue) }}
             >
               <MapPopup>
-                <div>
+                <div className="space-y-3 p-1">
                   <div>
-                    <h3>{venue.name}</h3>
-                    {venue.city && <p>{venue.city}</p>}
+                    <h3 className="font-semibold text-foreground">
+                      {venue.name}
+                    </h3>
+                    {venue.city && (
+                      <p className="text-sm text-muted-foreground">
+                        {venue.city}
+                      </p>
+                    )}
                   </div>
-                  <span>
+                  <span className="inline-flex items-center rounded-full border border-primary/30 bg-primary/20 px-2 py-0.5 text-xs font-medium text-primary">
                     {classCount} {classCount === 1 ? "class" : "classes"}
                   </span>
-                  <Link href={`/classes?venue=${venue._id}`}>View Classes</Link>
+                  <Link
+                    href={`/classes?venue=${venue._id}`}
+                    className="block w-full rounded-lg bg-primary py-2 text-center text-sm font-medium text-white transition-colors hover:bg-primary/90"
+                  >
+                    View Classes
+                  </Link>
                 </div>
               </MapPopup>
             </MapMarker>

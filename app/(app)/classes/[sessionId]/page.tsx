@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-// import { BookingButton } from "@/components/app/bookings/BookingButton";
+import { BookingButton } from "@/components/app/bookings/BookingButton";
 import { VenueMap } from "@/components/app/maps/VenueMap";
 import { PortableText } from "@portabletext/react";
 import { getUserTierInfo } from "@/lib/subscription";
@@ -208,14 +208,14 @@ export default async function ClassDetailPage({ params }: PageProps) {
 
             {/* Location Map */}
             {venue && (
-              <Card>
+              <Card className="max-w-svw">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <MapPin className="w-5 h-5 text-primary" />
                     Location
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="">
                   <VenueMap
                     venue={{
                       name: venue.name ?? "Venue",
@@ -230,7 +230,7 @@ export default async function ClassDetailPage({ params }: PageProps) {
                             }
                           : null,
                     }}
-                    className="aspect-video rounded-xl overflow-hidden"
+                    className="aspect-video rounded-xl max-w-svw"
                   />
                 </CardContent>
               </Card>
@@ -315,7 +315,15 @@ export default async function ClassDetailPage({ params }: PageProps) {
                 </div>
 
                 {/* Booking Button */}
-                <div>{/* <BookingButton /> */}</div>
+                <div>
+                  <BookingButton
+                    sessionId={session._id}
+                    tierLevel={activity?.tierLevel ?? "basic"}
+                    isFullyBooked={isFullyBooked}
+                    userTier={userTier}
+                    existingBookingId={existingBooking?._id ?? null}
+                  />
+                </div>
               </CardContent>
             </Card>
           </div>

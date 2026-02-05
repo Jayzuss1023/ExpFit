@@ -81,7 +81,6 @@ export function BookingsCalendar({
             const bookingCount = getBookingCount(day.date);
             const isSelected = modifiers.selected === true;
             const isToday = modifiers.today === true;
-            console.log(bookingCount);
 
             return (
               <button
@@ -94,12 +93,12 @@ export function BookingsCalendar({
                     "bg-accent font-bold text-accent-foreground",
                   modifiers.outside && "text-muted-foreground opacity-50",
                   isSelected &&
-                    "bg-violet-600! text-white! ring-2 ring-offset-2 hover:bg-violet-700!",
+                    "bg-teal-600! text-white! ring-2 ring-offset-2 hover:bg-teal-700!",
                 )}
               >
                 <span>{day.date.getDate()}</span>
                 {bookingCount > 0 && (
-                  <div>
+                  <div className="absolute bottom-0.5 flex gap-0.5">
                     {Array.from({
                       length: Math.min(bookingCount, 3),
                     }).map((_, i) => (
@@ -107,7 +106,7 @@ export function BookingsCalendar({
                         key={`dot-${day.date.getTime()}-${i}`}
                         className={cn(
                           "size-1 rounded-full",
-                          isSelected ? "bg-white" : "bg-violet-500",
+                          isSelected ? "bg-white" : "bg-teal-500",
                         )}
                       />
                     ))}
@@ -122,11 +121,11 @@ export function BookingsCalendar({
       {/* Legend */}
       <div className="mt-4 flex flex-wrap items-center gap-4 border-t pt-4 text-sm text-muted-foreground">
         <div className="flex items-center gap-2">
-          <div className="h-5 w-5 rounded bg-violet-600 ring-2 ring-violet-600 ring-offset-1" />
+          <div className="h-5 w-5 rounded bg-teal-600 ring-2 ring-teal-600 ring-offset-1" />
           <span>Selected</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-violet-500" />
+          <div className="h-2 w-2 rounded-full bg-teal-500" />
           <span>Has bookings</span>
         </div>
         <div className="flex items-center gap-2">

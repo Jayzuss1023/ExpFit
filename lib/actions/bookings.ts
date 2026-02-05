@@ -215,7 +215,7 @@ export async function cancelBooking(bookingId: string): Promise<BookingResult> {
     await writeClient
       .patch(bookingId)
       .set({
-        status: "Cancelled",
+        status: "cancelled",
         cancelledAt: new Date().toISOString(),
       })
       .commit();

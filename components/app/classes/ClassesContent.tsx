@@ -1,6 +1,6 @@
 "use client";
 
-import { format, isToday, isTomorrow, parseISO } from "date-fns";
+import { format, isToday, isTomorrow } from "date-fns";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { FILTERED_SESSIONS_QUERYResult } from "@/sanity.types";
 import { SessionCard } from "./SessionCard";
@@ -16,24 +16,24 @@ interface ClassesContentProps {
 // Compact format for tabs
 function formatTabLabel(dateStr: string): string {
   const date = new Date(dateStr);
-  const tomorrow = new Date(date);
-  tomorrow.setDate(date.getDate() + 1);
-  const actualToday = tomorrow.toLocaleDateString();
+  const realDate = new Date(date);
+  realDate.setDate(date.getDate() + 1);
+  const actualDay = realDate.toLocaleDateString();
 
-  if (isToday(actualToday)) return "Today";
-  if (isTomorrow(actualToday)) return "Tomorrow";
-  return format(actualToday, "EEE d"); // "Wed 18"
+  if (isToday(actualDay)) return "Today";
+  if (isTomorrow(actualDay)) return "Tomorrow";
+  return format(actualDay, "EEE d"); // "Wed 18"
 }
 
 // Full format for section headers
 function formatDayHeader(dateStr: string): string {
   const date = new Date(dateStr);
-  const tomorrow = new Date(date);
-  tomorrow.setDate(date.getDate() + 1);
-  const actualToday = tomorrow.toLocaleDateString();
-  if (isToday(actualToday)) return "Today";
-  if (isTomorrow(actualToday)) return "Tomorrow";
-  return format(actualToday, "EEEE, MMMM d"); // "Wednesday, December 18"
+  const realDate = new Date(date);
+  realDate.setDate(date.getDate() + 1);
+  const actualDay = realDate.toLocaleDateString();
+  if (isToday(actualDay)) return "Today";
+  if (isTomorrow(actualDay)) return "Tomorrow";
+  return format(actualDay, "EEEE, MMMM d"); // "Wednesday, December 18"
 }
 
 export function ClassesContent({
@@ -42,7 +42,7 @@ export function ClassesContent({
 }: ClassesContentProps) {
   const bookedSet = new Set(bookedSessionIds);
   const dayKeys = groupedSessions.map(([dateKey]) => dateKey);
-  console.log("DAYKEYS", dayKeys);
+
   const [activeDay, setActiveDay] = useState<string>(dayKeys[0] || "");
   const isScrollingFromClick = useRef(false);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -144,7 +144,6 @@ export function ClassesContent({
       <div className="sticky top-0 z-10 -mx-4 mb-6 bg-background/95 px-4 py-3 backdrop-blur">
         <div className="scrollbar-hide flex gap-2 overflow-x-auto pb-1">
           {[...dayKeys].map((dateKey) => {
-            console.log("DATEKEY", dateKey);
             // This is the sessions for the day
             const sessionsForDay = groupedSessions.find(
               ([key]) => key === dateKey,
@@ -159,7 +158,7 @@ export function ClassesContent({
                 onClick={() => scrollToDay(dateKey)}
                 className={`flex shrink-0 items-center gap-2 rounded-full border px-4 py-2 text0sm font-medium transition-colors ${
                   isActive
-                    ? "border-violet-500 bg-violet-500 text-white"
+                    ? "border-teal-500 bg-teal-500 text-white"
                     : "hover:bg-accenter"
                 }`}
               >
@@ -181,8 +180,6 @@ export function ClassesContent({
 
       {/* Day Sections */}
       {groupedSessions.map(([dateKey, sessions]) => {
-        console.log("DATEKEY", dateKey);
-
         return (
           <section
             key={dateKey}

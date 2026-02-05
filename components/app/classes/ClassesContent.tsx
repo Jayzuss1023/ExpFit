@@ -1,6 +1,6 @@
 "use client";
 
-import { format, isToday, isTomorrow } from "date-fns";
+import { format, isToday, isTomorrow, parseISO } from "date-fns";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { FILTERED_SESSIONS_QUERYResult } from "@/sanity.types";
 import { SessionCard } from "./SessionCard";
@@ -16,17 +16,24 @@ interface ClassesContentProps {
 // Compact format for tabs
 function formatTabLabel(dateStr: string): string {
   const date = new Date(dateStr);
-  if (isToday(date)) return "Today";
-  if (isTomorrow(date)) return "Tomorrow";
-  return format(date, "EEE d"); // "Wed 18"
+  const tomorrow = new Date(date);
+  tomorrow.setDate(date.getDate() + 1);
+  const actualToday = tomorrow.toLocaleDateString();
+
+  if (isToday(actualToday)) return "Today";
+  if (isTomorrow(actualToday)) return "Tomorrow";
+  return format(actualToday, "EEE d"); // "Wed 18"
 }
 
 // Full format for section headers
 function formatDayHeader(dateStr: string): string {
   const date = new Date(dateStr);
-  if (isToday(date)) return "Today";
-  if (isTomorrow(date)) return "Tomorrow";
-  return format(date, "EEEE, MMMM d"); // "Wednesday, December 18"
+  const tomorrow = new Date(date);
+  tomorrow.setDate(date.getDate() + 1);
+  const actualToday = tomorrow.toLocaleDateString();
+  if (isToday(actualToday)) return "Today";
+  if (isTomorrow(actualToday)) return "Tomorrow";
+  return format(actualToday, "EEEE, MMMM d"); // "Wednesday, December 18"
 }
 
 export function ClassesContent({
@@ -35,6 +42,7 @@ export function ClassesContent({
 }: ClassesContentProps) {
   const bookedSet = new Set(bookedSessionIds);
   const dayKeys = groupedSessions.map(([dateKey]) => dateKey);
+  console.log("DAYKEYS", dayKeys);
   const [activeDay, setActiveDay] = useState<string>(dayKeys[0] || "");
   const isScrollingFromClick = useRef(false);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -136,6 +144,7 @@ export function ClassesContent({
       <div className="sticky top-0 z-10 -mx-4 mb-6 bg-background/95 px-4 py-3 backdrop-blur">
         <div className="scrollbar-hide flex gap-2 overflow-x-auto pb-1">
           {[...dayKeys].map((dateKey) => {
+            console.log("DATEKEY", dateKey);
             // This is the sessions for the day
             const sessionsForDay = groupedSessions.find(
               ([key]) => key === dateKey,
@@ -171,34 +180,38 @@ export function ClassesContent({
       </div>
 
       {/* Day Sections */}
-      {groupedSessions.map(([dateKey, sessions]) => (
-        <section
-          key={dateKey}
-          id={`day-${dateKey}`}
-          className="mb-10 scroll-mt-24"
-        >
-          <div className="mb-4 flex items-center gap-3">
-            <h2 className="text-lg font-semibold">
-              {formatDayHeader(dateKey)}
-            </h2>
-            <span className="rounded-full bg-muted px-2 py-0.5 text-sm text-muted-foreground">
-              {sessions.length} {sessions.length === 1 ? "class" : "classes"}
-            </span>
-          </div>
+      {groupedSessions.map(([dateKey, sessions]) => {
+        console.log("DATEKEY", dateKey);
 
-          {/* Sessions Grid - Uses container queries for responsive columns */}
-          <div className="grid grid-cols-1 gap-4 @[480px]:grid-cols-2 @[480px]:gap-6 @[800px]:grid-cols-3">
-            {sessions.map((session) => (
-              <SessionCard
-                key={session._id}
-                session={session}
-                isBooked={bookedSet.has(session._id)}
-                distance={session.distance}
-              />
-            ))}
-          </div>
-        </section>
-      ))}
+        return (
+          <section
+            key={dateKey}
+            id={`day-${dateKey}`}
+            className="mb-10 scroll-mt-24"
+          >
+            <div className="mb-4 flex items-center gap-3">
+              <h2 className="text-lg font-semibold">
+                {formatDayHeader(dateKey)}
+              </h2>
+              <span className="rounded-full bg-muted px-2 py-0.5 text-sm text-muted-foreground">
+                {sessions.length} {sessions.length === 1 ? "class" : "classes"}
+              </span>
+            </div>
+
+            {/* Sessions Grid - Uses container queries for responsive columns */}
+            <div className="grid grid-cols-1 gap-4 @[480px]:grid-cols-2 @[480px]:gap-6 @[800px]:grid-cols-3">
+              {sessions.map((session) => (
+                <SessionCard
+                  key={session._id}
+                  session={session}
+                  isBooked={bookedSet.has(session._id)}
+                  distance={session.distance}
+                />
+              ))}
+            </div>
+          </section>
+        );
+      })}
     </div>
   );
 }

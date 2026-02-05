@@ -1,15 +1,15 @@
 import { PricingTable } from "@clerk/nextjs";
-import Link from "next/link";
 import {
-  Loader2,
   ArrowLeft,
-  Sparkles,
-  RefreshCw,
   Building2,
+  Loader2,
+  RefreshCw,
+  Sparkles,
 } from "lucide-react";
-import { TIER_DISPLAY_NAMES } from "@/lib/constants/subscription";
-import { Card, CardContent } from "@/components/ui/card";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { TIER_DISPLAY_NAMES } from "@/lib/constants/subscription";
 
 interface PageProps {
   searchParams: Promise<{

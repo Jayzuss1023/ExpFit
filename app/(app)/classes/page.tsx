@@ -151,6 +151,7 @@ export default async function ClassesPage({ searchParams }: PageProps) {
   const groupedByDay = new Map<string, SessionWithDistance[]>();
   for (const session of sessionsWithDistance) {
     const dateKey = format(new Date(session.startTime), "yyyy-MM-dd");
+
     const existing = groupedByDay.get(dateKey) || [];
     groupedByDay.set(dateKey, [...existing, session]);
   }

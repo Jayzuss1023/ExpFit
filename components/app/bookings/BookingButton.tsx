@@ -1,16 +1,16 @@
 "use client";
 
-import { useUser, SignInButton } from "@clerk/nextjs";
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { createBooking, cancelBooking } from "@/lib/actions/bookings";
-import Link from "next/link";
+import { SignInButton, useUser } from "@clerk/nextjs";
 import { CheckCircle, Loader2 } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
+import { cancelBooking, createBooking } from "@/lib/actions/bookings";
 import type { Tier } from "@/lib/constants/subscription";
 import {
-  TIER_HIERARCHY,
   TIER_DISPLAY_NAMES,
+  TIER_HIERARCHY,
 } from "@/lib/constants/subscription";
 
 interface BookingButtonProps {

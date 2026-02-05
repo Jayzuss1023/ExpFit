@@ -2,23 +2,23 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
-import { client } from "@/sanity/lib/client";
-import { writeClient } from "@/sanity/lib/writeClient";
-import {
-  getUserTier,
-  canAccessClass,
-  getRemainingBookings,
-} from "@/lib/subscription";
 import type { Tier } from "@/lib/subscription";
 import {
-  SESSION_FOR_BOOKING_QUERY,
-  EXISTING_BOOKING_QUERY,
-  BOOKING_FOR_CANCEL_QUERY,
+  canAccessClass,
+  getRemainingBookings,
+  getUserTier,
+} from "@/lib/subscription";
+import { getOrCreateUserProfile } from "@/lib/utils/user-profile";
+import { client } from "@/sanity/lib/client";
+import {
   BOOKING_FOR_ATTENDANCE_QUERY,
+  BOOKING_FOR_CANCEL_QUERY,
   CANCELLED_BOOKING_QUERY,
+  EXISTING_BOOKING_QUERY,
+  SESSION_FOR_BOOKING_QUERY,
   USER_PROFILE_ID_QUERY,
 } from "@/sanity/lib/queries/bookings";
-import { getOrCreateUserProfile } from "@/lib/utils/user-profile";
+import { writeClient } from "@/sanity/lib/writeClient";
 
 export type BookingResult = {
   success: boolean;

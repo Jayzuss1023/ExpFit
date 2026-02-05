@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { startOfToday } from "date-fns";
+import { useState } from "react";
+import type { USER_BOOKINGS_QUERYResult } from "@/sanity.types";
 import { BookingsCalendar } from "./BookingsCalendar";
 import { DayBookings } from "./DayBookings";
-import type { USER_BOOKINGS_QUERYResult } from "@/sanity.types";
 
 interface BookingsCalendarViewProps {
   bookings: USER_BOOKINGS_QUERYResult;

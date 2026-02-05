@@ -294,7 +294,7 @@ export async function confirmAttendance(
 
     // Updater booking to attend
     await writeClient.patch(bookingId).set({
-      status: "attend",
+      status: "attended",
       attendAt: now.toISOString(),
     });
 

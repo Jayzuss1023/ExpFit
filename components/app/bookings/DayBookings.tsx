@@ -1,15 +1,15 @@
 "use client";
 
-import { format, isSameDay, isToday, isPast } from "date-fns";
-import Link from "next/link";
-import Image from "next/image";
-import { urlFor } from "@/sanity/lib/image";
+import { format, isPast, isSameDay, isToday } from "date-fns";
 import { CalendarIcon, ClockIcon, MapPinIcon } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import {
   BOOKING_STATUS_COLORS,
-  getStatusLabel,
   getEffectiveStatus,
+  getStatusLabel,
 } from "@/lib/constants/status";
+import { urlFor } from "@/sanity/lib/image";
 import type { USER_BOOKINGS_QUERYResult } from "@/sanity.types";
 
 type Booking = USER_BOOKINGS_QUERYResult[number];

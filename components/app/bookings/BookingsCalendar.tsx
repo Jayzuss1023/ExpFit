@@ -1,7 +1,7 @@
 "use client";
 
+import { format, isPast, startOfToday } from "date-fns";
 import { useState } from "react";
-import { format, startOfToday, isPast } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import type { USER_BOOKINGS_QUERYResult } from "@/sanity.types";

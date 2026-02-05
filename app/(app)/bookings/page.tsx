@@ -1,13 +1,18 @@
 import { auth } from "@clerk/nextjs/server";
-import { sanityFetch } from "@/sanity/lib/live";
-import { USER_BOOKINGS_QUERY } from "@/sanity/lib/queries/bookings";
 import { isPast } from "date-fns";
-import { redirect } from "next/navigation";
+import {
+  ArrowRight,
+  Calendar,
+  Clock,
+  Sparkles,
+  TrendingUp,
+} from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { AttendanceAlert } from "@/components/app/bookings/AttendanceAlert";
 import { BookingsCalendarView } from "@/components/app/bookings/BookingsCalendarView";
-// import { AttendanceAlert } from "@/components/app/bookings/AttendanceAlert";
-// import { BookingCard } from "@/components/app/bookings/BookingCard";
-import { getUsageStats } from "@/lib/subscription";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -15,15 +20,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-  Calendar,
-  Clock,
-  TrendingUp,
-  Sparkles,
-  ArrowRight,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+// import { BookingCard } from "@/components/app/bookings/BookingCard";
+import { getUsageStats } from "@/lib/subscription";
+import { sanityFetch } from "@/sanity/lib/live";
+import { USER_BOOKINGS_QUERY } from "@/sanity/lib/queries/bookings";
 
 export default async function BookingsPage() {
   const { userId } = await auth();
@@ -86,9 +86,9 @@ export default async function BookingsPage() {
         </div>
       </div>
 
-      <main>
+      <main className="container mx-auto px-4 py-8 space-y-8">
         {/* Attendance Confirmation Alert */}
-        {/* <AttendanceAlert bookings={bookings} /> */}
+        <AttendanceAlert bookings={bookings} />
 
         {/* Calendar View */}
         <section>

@@ -184,11 +184,15 @@ export function AddressSearch({
 
       {/* Selected address display */}
       {value && !isFocused && !query && (
-        <div>
-          <MapPinIcon className="mt-0.5 h-4 w-4 shrink-0 text-green-600 dark:text-green-200" />
-          <div>
-            <p>Selected Location</p>
-            <p>{value.address}</p>
+        <div className="mt-3 flex items-start gap-3 rounded-lg border border-teal-200 bg-teal-50 p-3 dark:border-teal-900 dark:bg-green-950">
+          <MapPinIcon className="mt-0.5 h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" />
+          <div className="flex-1">
+            <p className="text-sm font-medium text-teal-800 dark:text-teal-200">
+              Selected Location
+            </p>
+            <p className="text-sm text-teal-700 dark:text-teal-300">
+              {value.address}
+            </p>
           </div>
         </div>
       )}

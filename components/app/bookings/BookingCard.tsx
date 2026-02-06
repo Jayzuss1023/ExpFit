@@ -1,18 +1,18 @@
 "use client";
-import Link from "next/link";
+import { addHours, format, isPast, isWithinInterval } from "date-fns";
+import { Calendar, Clock, MapPin } from "lucide-react";
 import Image from "next/image";
-import { format, addHours, isPast, isWithinInterval } from "date-fns";
-import { urlFor } from "@/sanity/lib/image";
-import { BookingActions } from "./BookingActions";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   BOOKING_STATUS_COLORS,
-  getStatusLabel,
   getEffectiveStatus,
+  getStatusLabel,
 } from "@/lib/constants/status";
+import { urlFor } from "@/sanity/lib/image";
 import type { USER_BOOKINGS_QUERYResult } from "@/sanity.types";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, MapPin } from "lucide-react";
+import { BookingActions } from "./BookingActions";
 
 type Booking = USER_BOOKINGS_QUERYResult[number];
 

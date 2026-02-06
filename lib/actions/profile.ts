@@ -3,6 +3,7 @@
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { client } from "@/sanity/lib/client";
 // import { client } from "@/sanity/lib/client";
 import { sanityFetch } from "@/sanity/lib/live";
 import { USER_PROFILE_WITH_PREFERENCES_QUERY } from "@/sanity/lib/queries";
@@ -75,6 +76,62 @@ export async function completeOnboarding(
   } catch (error) {
     console.error("Onboarding error:", error);
     return { success: false, error: "Failed to complete onboarding" };
+  }
+}
+
+// Update location preferences (from profile page)
+export async function updateLocationPreferences(
+  preferences: ProfilePreferences,
+): Promise<ProfileResult> {
+  try {
+    const { userId } = await auth();
+
+    if (!userId) {
+      return { success: false, error: "Unauthorized" };
+    }
+    const { location, searchRadius } = preferences;
+
+    if (!location || !location.lat || !location.lng || !location.address) {
+      return { success: false, error: "Location is required" };
+    }
+
+    if (!searchRadius || searchRadius < 1) {
+      return { success: false, error: "Search radius is required" };
+    }
+
+    // Get user profile
+    const userProfile = await client.fetch(
+      USER_PROFILE_WITH_PREFERENCES_QUERY,
+      {
+        clerkId: userId,
+      },
+    );
+
+    if (!userProfile) {
+      return { success: false, error: "User profile not found" };
+    }
+
+    // Update Sanity profile
+    await writeClient
+      .patch(userProfile._id)
+      .set({
+        location: {
+          lat: location.lat,
+          lng: location.lng,
+          address: location.address,
+        },
+        searchRadius,
+      })
+      .commit();
+
+    revalidatePath("/");
+    revalidatePath("/classes");
+    revalidatePath("/profile");
+
+    return { success: true, message: "Preferences updated" };
+  } catch (error) {
+    console.error("Update preferences error:", error);
+    return { success: false, error: "Failed to update preferences" };
   }
 }
 

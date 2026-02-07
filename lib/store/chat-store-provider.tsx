@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useRef, type ReactNode } from "react";
+import { createContext, type ReactNode, useContext, useRef } from "react";
 import { createStore, useStore } from "zustand";
 
 interface ChatState {
@@ -38,7 +38,6 @@ const ChatStoreContext = createContext<ChatStoreApi | null>(null);
 
 export function ChatStoreProvider({ children }: { children: ReactNode }) {
   const storeRef = useRef<ChatStoreApi | null>(null);
-
   if (!storeRef.current) {
     storeRef.current = createChatStore();
   }

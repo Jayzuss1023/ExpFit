@@ -69,6 +69,7 @@ export const AI_USER_UPCOMING_BOOKINGS_QUERY = defineQuery(`*[
   _id,
   status,
   createdAt,
+  attendedAt,
   classSession->{
     _id,
     startTime,
@@ -117,6 +118,7 @@ export const AI_USER_PAST_BOOKINGS_QUERY = defineQuery(`*[
   _id,
   status,
   attendedAt,
+  createdAt,
   classSession->{
     _id,
     startTime,

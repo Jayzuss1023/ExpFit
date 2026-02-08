@@ -1,15 +1,15 @@
 // Note: AI SDK 6 beta has evolving types - disabling TS checking for tool definitions
 import { tool } from "ai";
+import { defineQuery } from "next-sanity";
 import { z } from "zod";
 import { client } from "@/sanity/lib/client";
 import {
   AI_CATEGORIES_QUERY,
   AI_SEARCH_VENUES_QUERY,
-  AI_USER_UPCOMING_BOOKINGS_QUERY,
   AI_USER_ALL_BOOKINGS_QUERY,
   AI_USER_PAST_BOOKINGS_QUERY,
+  AI_USER_UPCOMING_BOOKINGS_QUERY,
 } from "@/sanity/lib/queries/ai";
-import { defineQuery } from "next-sanity";
 
 // Search for classes by name, category, or instructor
 // IMPORTANT: Only returns classes that have at least one future session scheduled

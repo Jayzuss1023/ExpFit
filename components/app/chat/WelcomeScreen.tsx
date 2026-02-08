@@ -1,6 +1,6 @@
 "use client";
 
-import { Dumbbell, Calendar, MapPin, Lightbulb } from "lucide-react";
+import { Calendar, Dumbbell, Lightbulb, MapPin } from "lucide-react";
 
 interface SuggestionProps {
   icon: React.ReactNode;
@@ -10,9 +10,15 @@ interface SuggestionProps {
 
 function Suggestion({ icon, text, onClick }: SuggestionProps) {
   return (
-    <button type="button" onClick={onClick}>
-      <div>{icon}</div>
-      <span>{text}</span>
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex items-center gap-3 rounded-xl border border-border bg-card p-3 text-left text-sm transition-all hover:border-primary/50 hover:bg-primary/5"
+    >
+      <div className="flex w-8 h-8 items-center justify-center rounded-lg bg-primary/10">
+        {icon}
+      </div>
+      <span className="text-muted-foreground">{text}</span>
     </button>
   );
 }
@@ -51,19 +57,21 @@ export function WelcomeScreen({
   );
 
   return (
-    <div>
-      <div>
+    <div className="flex h-full flex-col items-center justify-center px-4">
+      <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
         <Dumbbell className="h-8 w-8 text-primary" />
       </div>
 
-      <h2>Fitness Assistant</h2>
-      <p>
+      <h2 className="mb-2 text-xl font-semibold">Fitness Assistant</h2>
+      <p className="mb-8 text-center text-sm text-muted-foreground">
         I can help you find classes, check bookings, and get personalized
         recommendations.
       </p>
 
-      <div>
-        <p>Try asking:</p>
+      <div className="w-full max-w-sm space-y-2">
+        <p className="mb-3 text-xs font-medium text-muted-foreground">
+          Try asking:
+        </p>
         {filteredSuggestions.map((suggestion) => (
           <Suggestion
             key={suggestion.text}

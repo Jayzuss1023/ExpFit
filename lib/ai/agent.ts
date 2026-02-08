@@ -1,13 +1,10 @@
-import { ToolLoopAgent, createGateway } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { ToolLoopAgent } from "ai";
 import { aiTools } from "./tools";
-
-const gateway = createGateway({
-  apiKey: process.env.AI_GATEWAY_API_KEY,
-});
 
 // Create the fitness assistant agent using AI SDK 6 Beta ToolLoopAgent
 export const fitnessAgent = new ToolLoopAgent({
-  model: gateway("openai/gpt-4o-mini"),
+  model: openai("gpt-4o-mini"),
   instructions: `You are a helpful fitness class booking assistant for FitPass. You help users:
 - Find and discover fitness classes (yoga, HIIT, pilates, cycling, etc.)
 - Learn about available venues and their locations

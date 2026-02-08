@@ -1,20 +1,20 @@
 "use client";
 
 import {
-  Search,
+  BookOpen,
   Calendar,
-  MapPin,
-  Tag,
+  CheckCircle2,
   CreditCard,
   Lightbulb,
-  BookOpen,
   Loader2,
-  CheckCircle2,
+  MapPin,
+  Search,
+  Tag,
 } from "lucide-react";
 import {
+  type ClassSession,
   ResultCard,
   type SearchClass,
-  type ClassSession,
   type UserBooking,
 } from "./ResultCard";
 import type { ToolCallPart } from "./types";
@@ -82,6 +82,7 @@ export function ToolCallUI({ toolPart, closeChat }: ToolCallUIProps) {
     toolPart.state === "result" ||
     toolPart.output !== undefined ||
     toolPart.result !== undefined;
+
   const result = toolPart.output ?? toolPart.result;
 
   // Get items array from result (handles classes, sessions, venues, bookings, recommendations)
@@ -93,13 +94,18 @@ export function ToolCallUI({ toolPart, closeChat }: ToolCallUIProps) {
     result?.recommendations ??
     [];
   const itemsArray = Array.isArray(items) ? items : [];
-  console.log(items);
 
   return (
-    <div>
+    <div className="space-y-2">
       {/* Status Indicator */}
-      <div>
-        <div>
+      <div className="flex gap-3">
+        <div
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
+            isComplete
+              ? "bg-emerald-100 dark:bg-emerald-900/30"
+              : "bg-amber-100 dark:bg-amber-900/30"
+          }`}
+        >
           <Icon
             className={`h-4 w-4 ${
               isComplete
@@ -108,7 +114,83 @@ export function ToolCallUI({ toolPart, closeChat }: ToolCallUIProps) {
             }`}
           />
         </div>
+        <div
+          className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm ${
+            isComplete
+              ? "bg-emerald-50 border border-emerald-200 dark:bg-emerald-950/30 dark:border-emerald-800"
+              : "bg-amber-50 border border-amber-200 dark:bg-amber-950/30 dark:border-amber-800"
+          }`}
+        >
+          {isComplete ? (
+            <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+          ) : (
+            <Loader2 className="h-4 w-4 text-amber-600 dark:text-amber-400 animate-spin" />
+          )}
+          <span
+            className={`font-medium ${
+              isComplete
+                ? "text-emerald-700 dark:text-emerald-300"
+                : "text-amber-700 dark:text-amber-300"
+            }`}
+          >
+            {isComplete ? config.doneLabel : `${config.label}...`}
+          </span>
+        </div>
       </div>
+      {/* Results widgets */}
+      {isComplete && itemsArray.length > 0 && (
+        <div className="ml-11 space-y-2">
+          <p className="text-xs text-muted-foreground">
+            {itemsArray.length} result{itemsArray.length !== 1 ? "s" : ""}
+          </p>
+          {itemsArray.slice(0, 3).map((item, index) => {
+            // Items have either _id (Sanity docs) or id (transformed results)
+            const record = item as Record<string, unknown>;
+            const key = ((record._id ?? record.id) as string) || String(index);
+
+            if (
+              toolName === "searchClasses" ||
+              toolName === "getRecommendations"
+            ) {
+              return (
+                <ResultCard
+                  key={key}
+                  variant="class"
+                  data={item as unknown as SearchClass}
+                  onClose={closeChat}
+                />
+              );
+            }
+            if (toolName === "getClassSessions") {
+              return (
+                <ResultCard
+                  key={key}
+                  variant="session"
+                  data={item as unknown as ClassSession}
+                  onClose={closeChat}
+                />
+              );
+            }
+            if (toolName === "getUserBookings") {
+              return (
+                <ResultCard
+                  key={key}
+                  variant="booking"
+                  data={item as unknown as UserBooking}
+                  onClose={closeChat}
+                />
+              );
+            }
+
+            return null;
+          })}
+          {itemsArray.length > 3 && (
+            <p className="text-xs text-muted-foreground text-center">
+              +{itemsArray.length - 3} more
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }

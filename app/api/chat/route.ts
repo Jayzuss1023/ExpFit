@@ -1,13 +1,15 @@
-import { createAgentUIStreamResponse } from "ai";
-import { fitnessAgent } from "@/lib/ai/agent";
 import { auth } from "@clerk/nextjs/server";
-import { getUserTier } from "@/lib/subscription";
+import { createAgentUIStreamResponse } from "ai";
 import { getUserPreferences } from "@/lib/actions/profile";
+import { fitnessAgent } from "@/lib/ai/agent";
+import { getUserTier } from "@/lib/subscription";
 
 export async function POST(request: Request) {
   const { userId: clerkId } = await auth();
+
+  // Reject unauthenticated requests
   if (!clerkId) {
-    return new Response("Unauthorized", { status: 401 });
+    return new Response("Unauthorizerd", { status: 401 });
   }
 
   // Fetch user context in parallel
@@ -20,34 +22,29 @@ export async function POST(request: Request) {
 
   // Build rich user context for the AI
   const locationContext = preferences?.location
-    ? `
-        - Location: ${preferences.location.address}
-        - Search Radius: ${preferences.searchRadius} KM
-        - Coordinates: ${preferences.location.lat}, ${preferences.location.lng}
-    `
+    ? `- Location: ${preferences.location.address}
+- Search radius: ${preferences.searchRadius} km
+- Coordinates: ${preferences.location.lat}, ${preferences.location.lng}`
     : "- Location: Not set";
 
   const tierContext = tier
     ? `- Subscription: ${tier} tier`
-    : `- Subscription: No active subscription`;
+    : "- Subscription: No active subscription";
 
   // Get current date/time for accurate "today" / "tomorrow" handling
   const now = new Date();
-  const dateTimeContext = `
-    - Current date: ${now.toLocaleDateString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })}
-  - Current time: ${now.toLocaleDateString("en-US", {
+  const dateTimeContext = `- Current date: ${now.toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  })}
+- Current time: ${now.toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
     timeZoneName: "short",
   })}
-  - Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}
-  `;
-
+- Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`;
   // Inject user context as a system message
   const enhancedMessages = [
     {
@@ -57,21 +54,22 @@ export async function POST(request: Request) {
         {
           type: "text" as const,
           text: `Current date and time:
-                    ${dateTimeContext}
+${dateTimeContext}
 
-                    Current user context:
-                    - Clerk ID: ${clerkId}
-                    ${tierContext}
-                    ${locationContext}
+Current user context:
+- Clerk ID: ${clerkId}
+${tierContext}
+${locationContext}
 
-                    Guidelines:
-                    - Use the current date/time above to accurately determine "today", "tomorrrow", etc. when discussing sessions.
-                    - When searching for classes or venues, consider the user's location and radius.
-                    - When the user asks about their bookings, use the getUserBookings tool with their clerkId (${clerkId}).
-                    - Personalize recommendations based on their subscription tier (${tier || "none"}).
-                    - If user has no subscription, encourage them to check out the subscription plans.
-                    Keep responses concise and helpful.
-                `,
+Guidelines:
+- Use the current date/time above to accurately determine "today", "tomorrow", etc. when discussing sessions.
+- When searching for classes or venues, consider the user's location and radius.
+- When the user asks about their bookings, use the getUserBookings tool with their clerkId (${clerkId}).
+- Personalize recommendations based on their subscription tier (${
+            tier || "none"
+          }).
+- If user has no subscription, encourage them to check out the subscription plans.
+- Keep responses concise and helpful.`,
         },
       ],
     },

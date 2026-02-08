@@ -1,6 +1,6 @@
 "use client";
 
-import { User, Bot } from "lucide-react";
+import { Bot, User } from "lucide-react";
 import { MessageContent } from "./MessageContent";
 
 interface MessageBubbleProps {
@@ -17,10 +17,10 @@ export function MessageBubble({
   const isUser = role === "user";
 
   return (
-    <div>
+    <div className={`flex gap-3 ${isUser ? "flex-row-reverse" : "flex-row"}`}>
       {/* Avatar */}
       <div
-        className={`flex h-8 w-8 shrink-0 items;center justify-center rounded-full ${
+        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
           isUser ? "bg-primary" : "bg-primary/10"
         }`}
       >

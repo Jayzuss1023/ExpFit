@@ -127,8 +127,8 @@ export default async function ProfilePage() {
             <CardContent>
               <ProfileEditor
                 initialLocation={
-                  userProfile?.location?.lat !== null &&
-                  userProfile?.location?.lng !== null &&
+                  userProfile?.location?.lat != null &&
+                  userProfile?.location?.lng != null &&
                   userProfile?.location?.address
                     ? {
                         lat: userProfile.location.lat,

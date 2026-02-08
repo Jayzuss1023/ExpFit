@@ -626,9 +626,9 @@ export type USER_PROFILE_WITH_PREFERENCES_QUERYResult = {
   email: string | null;
   imageUrl: string | null;
   location: {
-    lat?: number;
-    lng?: number;
-    address?: string;
+    lat: number;
+    lng: number;
+    address: string;
   } | null;
   searchRadius: 10 | 25 | 5 | 50 | null;
   subscriptionTier: "basic" | "champion" | "none" | "performance" | null;

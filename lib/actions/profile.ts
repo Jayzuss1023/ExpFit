@@ -4,7 +4,6 @@ import { auth, clerkClient } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { client } from "@/sanity/lib/client";
-// import { client } from "@/sanity/lib/client";
 import { sanityFetch } from "@/sanity/lib/live";
 import { USER_PROFILE_WITH_PREFERENCES_QUERY } from "@/sanity/lib/queries";
 import { writeClient } from "@/sanity/lib/writeClient";

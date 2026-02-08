@@ -12,10 +12,10 @@ import {
   usePendingMessage,
 } from "@/lib/store/chat-store-provider";
 
-// import { getMessageText, getToolParts } from "./utils";
-// import { WelcomeScreen } from "./WelcomeScreen";
-// import { MessageBubble } from "./MessageBubble";
-// import { ToolCallUI } from "./ToolCallUI";
+import { getMessageText, getToolParts } from "./utils";
+import { WelcomeScreen } from "./WelcomeScreen";
+import { MessageBubble } from "./MessageBubble";
+import { ToolCallUI } from "./ToolCallUI";
 
 export function ChatSheet() {
   const isOpen = useIsChatOpen();
@@ -79,8 +79,12 @@ export function ChatSheet() {
         {/* Messages */}
         <div>
           {messages.length === 0 ? (
-            // <WelcomeScreen onSuggestionClick={sendMessage} isSignedIn={isSignedIn ?? false}/>
-            <div>No Messages</div>
+            <div>
+              <WelcomeScreen
+                onSuggestionClick={sendMessage}
+                isSignedIn={isSignedIn ?? false}
+              />
+            </div>
           ) : (
             <div>
               {messages.map((message) => {
@@ -102,6 +106,15 @@ export function ChatSheet() {
                           closeChat={closeChat}
                         />
                       ))}
+
+                    {/* Message Content */}
+                    {hasContent && (
+                      <MessageBubble
+                        role={message.role}
+                        content={content}
+                        closeChat={closeChat}
+                      />
+                    )}
                   </div>
                 );
               })}

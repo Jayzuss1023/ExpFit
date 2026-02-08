@@ -12,10 +12,10 @@ import {
 import { defineQuery } from "next-sanity";
 
 // Search for classes by name, category, or instructor
-// IMPORTANT: Only return classes that have at least one future session scheduled
+// IMPORTANT: Only returns classes that have at least one future session scheduled
 export const searchClasses = tool({
   description:
-    "Search for fitness classes by name, category, instructor, or tier level. Only return classes with upcoming sessions available. Use this to help users find classes they're interested in.",
+    "Search for fitness classes by name, category, instructor, or tier level. Only returns classes with upcoming sessions available. Use this to help users find classes they're interested in.",
   inputSchema: z.object({
     query: z
       .string()
@@ -32,8 +32,9 @@ export const searchClasses = tool({
       .describe("Tier level filter"),
   }),
   execute: async ({ query, category, instructor, tierLevel }) => {
-    // Base filter: must be an activity AND have atleast one future scheduled session
+    // Base filter: must be an activity AND have at least one future scheduled session
     let filter = `_type == "activity" && count(*[_type == "classSession" && activity._ref == ^._id && startTime > now() && status == "scheduled"]) > 0`;
+
     if (query) {
       filter += ` && (name match "*${query}*" || instructor match "*${query}*")`;
     }
@@ -45,12 +46,12 @@ export const searchClasses = tool({
     }
 
     const groqQuery = defineQuery(`*[${filter}] | order(name asc) [0...10] {
-        _id,
-        name,
-        instructor,
-        duration,
-        tierLevel,
-        category->{name}
+      _id,
+      name,
+      instructor,
+      duration,
+      tierLevel,
+      category->{name}
     }`);
 
     const activities = await client.fetch(groqQuery);
@@ -128,7 +129,7 @@ export const getClassSessions = tool({
 // Get venues near a location or by name
 export const searchVenues = tool({
   description:
-    "Search for fitness venues/studios by name or city. Returns venue detauls including address and amenities.",
+    "Search for fitness venues/studios by name or city. Returns venue details including address and amenities.",
   inputSchema: z.object({
     name: z.string().optional().describe("Venue name to search for"),
     city: z.string().optional().describe("City to search in"),
@@ -143,8 +144,8 @@ export const searchVenues = tool({
       };
     }
 
-    // Builder dynamic filter
-    let filter = `_type == "venue`;
+    // Build dynamic filter
+    let filter = `_type == "venue"`;
     if (name) {
       filter += ` && name match "*${name}*"`;
     }
@@ -153,11 +154,11 @@ export const searchVenues = tool({
     }
 
     const venuesQuery = defineQuery(`*[${filter}] | order(name asc) [0...10] {
-        _id,
-        name,
-        description,
-        address,
-        amenities
+      _id,
+      name,
+      description,
+      address,
+      amenities
     }`);
 
     const venues = await client.fetch(venuesQuery);
@@ -173,21 +174,21 @@ export const searchVenues = tool({
 export const getCategories = tool({
   description:
     "Get all available fitness class categories. Useful when users want to know what types of classes are offered.",
-  inputSchema: z.object({}),,
+  inputSchema: z.object({}),
   execute: async () => {
-    const categories = await client.fetch(AI_CATEGORIES_QUERY)
+    const categories = await client.fetch(AI_CATEGORIES_QUERY);
 
     return {
-        count: categories.length,
-        categories
-    }
-  }
+      count: categories.length,
+      categories,
+    };
+  },
 });
 
 // Get subscription tier information
 export const getSubscriptionInfo = tool({
   description:
-    "Get information about subscription tiers, pricing, and what classes each tier can access",
+    "Get information about subscription tiers, pricing, and what classes each tier can access.",
   inputSchema: z.object({}),
   execute: async () => {
     return {
@@ -223,8 +224,8 @@ export const getSubscriptionInfo = tool({
   },
 });
 
-// Get class recomendations based on preferences
-// IMPORANT: Only returns classes that have at least one future session scheduled
+// Get class recommendations based on preferences
+// IMPORTANT: Only returns classes that have at least one future session scheduled
 export const getRecommendations = tool({
   description:
     "Get personalized class recommendations based on user preferences like fitness goals, preferred time of day, or difficulty level. Only returns classes with upcoming sessions available.",
@@ -245,18 +246,18 @@ export const getRecommendations = tool({
   execute: async ({ fitnessGoal, preferredDuration, tierLevel }) => {
     // Map fitness goals to likely categories
     const goalCategories: Record<string, string[]> = {
-      strength: ["HIIT", "Strength", "Crossfit"],
+      strength: ["HIIT", "Strength", "CrossFit"],
       flexibility: ["Yoga", "Pilates", "Stretching"],
       cardio: ["Cycling", "Running", "Dance", "HIIT"],
-      relaxation: ["Yoga", "Mediation", "Pilates"],
+      relaxation: ["Yoga", "Meditation", "Pilates"],
       "weight-loss": ["HIIT", "Cycling", "Boot Camp"],
     };
 
-    // Base filter: must be an activity AND have at least one future schedules session
-
+    // Base filter: must be an activity AND have at least one future scheduled session
     let filter = `_type == "activity" && count(*[_type == "classSession" && activity._ref == ^._id && startTime > now() && status == "scheduled"]) > 0`;
 
     if (tierLevel) {
+      // Filter based on tier access
       const tierLevels =
         tierLevel === "champion"
           ? ["basic", "performance", "champion"]
@@ -274,12 +275,12 @@ export const getRecommendations = tool({
 
     const recommendationsQuery =
       defineQuery(`*[${filter}] | order(name asc) [0...20] {
-        _id,
-        name,
-        instructor,
-        duration,
-        tierLevel,
-        category->{name}
+      _id,
+      name,
+      instructor,
+      duration,
+      tierLevel,
+      category->{name}
     }`);
 
     const activities = await client.fetch(recommendationsQuery);
@@ -287,14 +288,15 @@ export const getRecommendations = tool({
     // Filter by goal-related categories if provided
     let recommended = activities;
     if (fitnessGoal && goalCategories[fitnessGoal]) {
-      const targetedCategories = goalCategories[fitnessGoal];
+      const targetCategories = goalCategories[fitnessGoal];
       recommended = activities.filter(
         (a: { category?: { name: string } }) =>
           a.category &&
-          targetedCategories.some((c) =>
+          targetCategories.some((c) =>
             a.category?.name.toLowerCase().includes(c.toLowerCase()),
           ),
       );
+      // If no matches, return all activities
       if (recommended.length === 0) {
         recommended = activities;
       }
@@ -315,7 +317,7 @@ export const getRecommendations = tool({
 // Get user's bookings (upcoming, past, or all)
 export const getUserBookings = tool({
   description:
-    "Get the current user's booking. Can filter by upcoming or past bookings. Use this when users ask about their scheduled classes, booking history, or want to know what classes they have coming up. The clerk Id is provided in the system context.",
+    "Get the current user's bookings. Can filter by upcoming or past bookings. Use this when users ask about their scheduled classes, booking history, or want to know what classes they have coming up. The clerkId is provided in the system context.",
   inputSchema: z.object({
     type: z
       .enum(["upcoming", "past", "all"])
@@ -340,7 +342,7 @@ export const getUserBookings = tool({
 
     const query =
       type === "past"
-        ? AI_USER_ALL_BOOKINGS_QUERY
+        ? AI_USER_PAST_BOOKINGS_QUERY
         : type === "all"
           ? AI_USER_ALL_BOOKINGS_QUERY
           : AI_USER_UPCOMING_BOOKINGS_QUERY;
@@ -350,39 +352,30 @@ export const getUserBookings = tool({
     return {
       count: bookings.length,
       type,
-      bookings: bookings.map(
-        (b: {
-          _id: string;
-          status: string;
-          createdAt?: string;
-          attendedAt?: string;
-          classSession?: {
-            _id: string;
-            startTime: string;
-            activity?: {
-              name: string;
-              instructor: string;
-              duration: number;
-            };
-            venue?: {
-              name: string;
-              city: string;
-            };
-          };
-        }) => ({
-          id: b._id,
-          sessionId: b.classSession?._id,
-          status: b.status,
-          bookedAt: b.createdAt,
-          attendedAt: b.attendedAt,
-          class: b.classSession?.activity?.name,
-          instructor: b.classSession?.activity?.instructor,
-          duration: b.classSession?.activity?.duration,
-          dateTime: b.classSession?.startTime,
-          venue: b.classSession?.venue?.name,
-          city: b.classSession?.venue?.city,
-        }),
-      ),
+      bookings: bookings.map((b) => ({
+        id: b._id,
+        sessionId: b.classSession?._id,
+        status: b.status,
+        bookedAt: b.createdAt,
+        attendedAt: b.attendedAt,
+        class: b.classSession?.activity?.name,
+        instructor: b.classSession?.activity?.instructor,
+        duration: b.classSession?.activity?.duration,
+        dateTime: b.classSession?.startTime,
+        venue: b.classSession?.venue?.name,
+        city: b.classSession?.venue?.city,
+      })),
     };
   },
 });
+
+// Export all tools
+export const aiTools = {
+  searchClasses,
+  getClassSessions,
+  searchVenues,
+  getCategories,
+  getSubscriptionInfo,
+  getRecommendations,
+  getUserBookings,
+};

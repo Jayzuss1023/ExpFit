@@ -150,7 +150,7 @@ export default function OnboardingPage() {
                       How far will you travel?
                     </h1>
                     <p className="mt-2 text-muted-foreground">
-                      Set your maximum distance for classes
+                      Select 50km for max search results
                     </p>
                   </div>
 

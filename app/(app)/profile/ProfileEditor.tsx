@@ -126,7 +126,7 @@ export function ProfileEditor({
         <button
           type="button"
           onClick={handleSave}
-          disabled={!location || !radius || !isSubmitting}
+          disabled={!location || !radius || isSubmitting}
           className="flex flex-1 justify-center gap-2 rounded-lg bg-teal-600 py-2.5 text-sm font-medium text-white transition-colors hover:bg-teal-700 disabled:opacity-50"
         >
           {isSubmitting ? (

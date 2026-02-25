@@ -118,7 +118,8 @@ export default function OnboardingPage() {
                       Where are you located?
                     </h1>
                     <p className="mt-2 text-muted-foreground">
-                      We'll show you classes near your location
+                      Use (Richmond, Texas, United States) Venues near this area
+                      have been uploaded to the database
                     </p>
                   </div>
 

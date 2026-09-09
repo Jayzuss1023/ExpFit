@@ -1,37 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ExpFit (FitPass)
 
-## Getting Started
+A fitness class booking app. ClassPass style memberships where you browse studios, book sessions, and manage your schedule from one place.
 
-First, run the development server:
+Built with **Next.js**, **Sanity**, and **Clerk**. Includes an AI chat assistant that can search classes, venues, and bookings for you.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Class discovery** — search and filter sessions by category, venue, tier, or keyword
+- **Map view** — find nearby studios with Leaflet (radius filter + address search via Mapbox)
+- **Bookings** — book/cancel sessions, mark attendance, and view them on a calendar
+- **Subscription tiers** — Basic / Performance / Champion with monthly limits and class access rules (Clerk Billing)
+- **AI assistant** — chat UI backed by an OpenAI tool calling agent that queries Sanity for real data
+- **Onboarding & profiles** — preference setup and profile editing after sign-up
+- **Sanity Studio** — content admin at `/studio` for venues, activities, sessions, bookings, etc.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Tech stack
 
-To learn more about Next.js, take a look at the following resources:
+| Area | Tools |
+|------|--------|
+| Framework | Next.js 16 (App Router), React 19, TypeScript |
+| Styling | Tailwind CSS 4, shadcn/ui, Radix |
+| Auth & billing | Clerk |
+| CMS / data | Sanity (schemas, GROQ, embedded Studio) |
+| Maps | Leaflet, react-leaflet, Mapbox geocoding |
+| AI | Vercel AI SDK + OpenAI |
+| State / utils | Zustand, Zod, date-fns, Biome |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Getting started
 
-## Deploy on Vercel
+- Node.js 20+
+- pnpm (preferred)
+- Accounts for: Clerk, Sanity, OpenAI, and Mapbox (for address search)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# ExpFit
+# Clerk
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+
+# Sanity
+NEXT_PUBLIC_SANITY_PROJECT_ID=
+NEXT_PUBLIC_SANITY_DATASET=
+NEXT_PUBLIC_SANITY_API_VERSION=2026-01-22
+SANITY_API_TOKEN=
+
+# Mapbox (address autocomplete / geocoding)
+NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=
+
+# OpenAI (AI chat assistant)
+OPENAI_API_KEY=
